@@ -31,31 +31,31 @@ RSpec.describe Post, type: :model do
 
   describe '#update_posts_counter' do
     it 'updates the posts_counter after saving a post' do
-      post = FactoryBot.create(:post, author: user)
+      FactoryBot.create(:post, author: user)
       expect(user.reload.posts_counter).to eq(1)
     end
   end
 
   describe '#return_recent_comments' do
-  it 'returns the most recent comments' do
-    post = FactoryBot.create(:post, author: user)
-    older_comment = FactoryBot.create(:comment, post: post, created_at: 2.days.ago)
-    recent_comment1 = FactoryBot.create(:comment, post: post, created_at: 1.day.ago)
-    recent_comment2 = FactoryBot.create(:comment, post: post, created_at: 1.hour.ago)
+    it 'returns the most recent comments' do
+      post = FactoryBot.create(:post, author: user)
+      older_comment = FactoryBot.create(:comment, post:, created_at: 2.days.ago)
+      recent_comment1 = FactoryBot.create(:comment, post:, created_at: 1.day.ago)
+      recent_comment2 = FactoryBot.create(:comment, post:, created_at: 1.hour.ago)
 
-    recent_comments = post.return_recent_comments
+      recent_comments = post.return_recent_comments
 
-    expect(recent_comments.sort_by(&:created_at)).to eq([older_comment, recent_comment1, recent_comment2])
-  end
+      expect(recent_comments.sort_by(&:created_at)).to eq([older_comment, recent_comment1, recent_comment2])
+    end
 
-  it 'returns up to 5 recent comments' do
-    post = FactoryBot.create(:post, author: user)
-    FactoryBot.create_list(:comment, 7, post: post)
+    it 'returns up to 5 recent comments' do
+      post = FactoryBot.create(:post, author: user)
+      FactoryBot.create_list(:comment, 7, post:)
 
-    recent_comments = post.return_recent_comments
+      recent_comments = post.return_recent_comments
 
-    expect(recent_comments.count).to eq(5)
-    expect(user.reload.posts_counter).to eq(1)
-  end
+      expect(recent_comments.count).to eq(5)
+      expect(user.reload.posts_counter).to eq(1)
+    end
   end
 end
