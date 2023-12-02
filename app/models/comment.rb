@@ -8,6 +8,7 @@ class Comment < ApplicationRecord
 
   def update_comments_counter
     return unless post.present?
+
     post.update(comments_counter: post.comments.count)
   end
 end
