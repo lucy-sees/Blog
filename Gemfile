@@ -36,7 +36,7 @@ gem 'bulma-rails', '~> 0.6.1'
 gem 'simple_form', '~> 5.0'
 
 # Use binding of caller to enable the REPL and local/instance variable inspection.
-gem "binding_of_caller"
+gem 'binding_of_caller'
 
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
