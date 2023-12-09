@@ -1,14 +1,12 @@
 class PostsController < ApplicationController
   def index
     @user = User.find(params[:user_id])
-    @posts = @user.posts.order(created_at: :asc)
+    @posts = @user.posts.includes([:comments]).order(created_at: :asc)
   end
 
   def show
     @post = Post.find(params[:id])
-    @comments = @post.comments
     @like = Like.new
-    @post.reload
   end
 
   def new
@@ -26,15 +24,6 @@ class PostsController < ApplicationController
     else
       flash[:alert] = "Couln't create post!"
       render :new, status: :unprocessable_entity
-    end
-  end
-
-  def update
-    @post = Post.find(params[:id])
-    if @post.update(post_params)
-      redirect_to @post, notice: 'Post was successfully updated.'
-    else
-      render :edit
     end
   end
 
