@@ -7,4 +7,8 @@ class CreateLikes < ActiveRecord::Migration[7.1]
       t.timestamps
     end
   end
+
+  def set_defaults
+    self.likes_counter ||= 0
+  end
 end
