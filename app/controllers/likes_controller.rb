@@ -1,14 +1,21 @@
 class LikesController < ApplicationController
   def create
-    @like = Like.new
-    @like.author = current_user
-    @like.post = Post.find(params[:post_id])
+    @post = Post.find(params[:post_id])
+    @like = @post.likes.build(user: current_user)
     if @like.save
-      flash[:notice] = 'Like added successfully!'
-      redirect_to user_post_path(user_id: params[:user_id], id: params[:post_id])
+      respond_to do |format|
+        format.html { redirect_to user_post_path(user_id: current_user.id, id: @post.id) }
+        format.js
+      end
     else
-      flash[:alert] = "Couln't add a like!"
-      render :new, status: :unprocessable_entity
+      flash[:alert] = "Couldn't add a like!"
+      redirect_to user_post_path(user_id: current_user.id, id: @post.id)
     end
+  end
+
+  private
+
+  def like_params
+    params.require(:like).permit(:author_id)
   end
 end
