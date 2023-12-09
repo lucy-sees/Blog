@@ -3,5 +3,6 @@
   <p><%= truncate(post.text, length: 150, omission: "...") %></p>
   <div class="like-comment">
     <p>Comments: <%= post.comments_counter %>, Likes: <%= post.likes_counter %></p> 
+    <p id="like-count-<%= post.id %>">Likes: <%= post.likes.size %></p>
   </div>
 </div>
