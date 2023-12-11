@@ -8,6 +8,6 @@ Rails.application.routes.draw do
       resources :likes, only: [:create]
     end
   end 
-
+  resources :posts, only: [:index, :show]
   root 'users#index'
 end
