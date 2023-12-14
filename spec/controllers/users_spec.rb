@@ -18,10 +18,11 @@ RSpec.describe 'UsersController', type: :request do
   end
 
   describe 'GET #show' do
-    before(:example) { get user_path(id: 3) }
+    let(:user) { User.create!(name: 'Tom', posts_counter: 0) }
+    before(:example) { get user_path(user) }
 
     it 'returns http success status' do
-      expect(response).to have_http_status(:ok)
+      expect(response).to have_http_status(:success)
     end
 
     it "renders 'show' template" do
@@ -29,7 +30,7 @@ RSpec.describe 'UsersController', type: :request do
     end
 
     it 'response body includes correct placeholder text' do
-      expect(response.body).to include('Bio')
+      expect(response.body).to include(user.name)
     end
   end
 end

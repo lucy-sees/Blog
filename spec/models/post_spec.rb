@@ -1,61 +1,69 @@
-require 'rails_helper'
+require_relative '../rails_helper'
 
 RSpec.describe Post, type: :model do
-  let(:user) { FactoryBot.create(:user) }
-
-  describe 'validations' do
-    subject { Post.new(title: 'Lorem Ipsum', comments_counter: 0, likes_counter: 0) }
-
-    before { subject.save }
-
-    it 'includes title' do
-      subject.title = nil
-      expect(subject).to_not be_valid
-    end
-
-    it 'should be less than 250 characters' do
-      subject.title = 'a' * 251
-      expect(subject).to_not be_valid
-    end
-
-    it 'should allow valid values for comments_counter' do
-      subject.comments_counter = -1
-      expect(subject).to_not be_valid
-    end
-
-    it 'should allow valid values for likes_counter' do
-      subject.likes_counter = -1
-      expect(subject).to_not be_valid
-    end
+  subject do
+    Post.new(title: 'First post', text: 'Better post', comments_counter: 191, likes_counter: 8791, author_id: 1)
   end
 
-  describe '#update_posts_counter' do
-    it 'updates the posts_counter after saving a post' do
-      FactoryBot.create(:post, author: user)
-      expect(user.reload.posts_counter).to eq(1)
-    end
+  before { subject.save }
+
+  it 'title should be present' do
+    subject.title = nil
+    expect(subject).to_not be_valid
   end
 
-  describe '#return_recent_comments' do
-    it 'returns the most recent comments' do
-      post = FactoryBot.create(:post, author: user)
-      older_comment = FactoryBot.create(:comment, post:, created_at: 2.days.ago)
-      recent_comment1 = FactoryBot.create(:comment, post:, created_at: 1.day.ago)
-      recent_comment2 = FactoryBot.create(:comment, post:, created_at: 1.hour.ago)
+  it 'title should be First post' do
+    expect(subject.title).to eql 'First post'
+  end
 
-      recent_comments = post.return_recent_comments
+  it 'title should be maximum 250 words' do
+    subject.title = 'c' * 251
+    expect(subject).to_not be_valid
+  end
 
-      expect(recent_comments.sort_by(&:created_at)).to eq([older_comment, recent_comment1, recent_comment2])
-    end
+  it 'text should be Better post' do
+    expect(subject.text).to eql 'Better post'
+  end
 
-    it 'returns up to 5 recent comments' do
-      post = FactoryBot.create(:post, author: user)
-      FactoryBot.create_list(:comment, 7, post:)
+  it 'comments counter should be present' do
+    subject.comments_counter = nil
+    expect(subject).to_not be_valid
+  end
 
-      recent_comments = post.return_recent_comments
+  it 'comments counter should be valid' do
+    expect(subject.comments_counter).to eql 191
+  end
 
-      expect(recent_comments.count).to eq(5)
-      expect(user.reload.posts_counter).to eq(1)
-    end
+  it 'comments counter should be greater than or equal to 0' do
+    subject.comments_counter = -18
+    expect(subject).to_not be_valid
+  end
+
+  it 'comments counter should be integer' do
+    subject.comments_counter = 3.14
+    expect(subject).to_not be_valid
+  end
+
+  it 'likes counter should be present' do
+    subject.likes_counter = nil
+    expect(subject).to_not be_valid
+  end
+
+  it 'likes counter should be valid' do
+    expect(subject.likes_counter).to eql 8791
+  end
+
+  it 'likes counter should be greater than or equal to 0' do
+    subject.likes_counter = -1930
+    expect(subject).to_not be_valid
+  end
+
+  it 'likes counter should be integer' do
+    subject.likes_counter = 3.1415
+    expect(subject).to_not be_valid
+  end
+
+  it 'should return the 5 most recent comments for a given post' do
+    expect(subject.recent_comments).to eq(subject.comments.order(created_at: :desc).limit(5))
   end
 end

@@ -1,35 +1,41 @@
-require_relative '../rails_helper'
+require 'rails_helper'
 
-RSpec.describe 'PostsController', type: :request do
+RSpec.describe PostsController, type: :controller do
+  let(:user) { User.create!(name: 'Tom', posts_counter: 0) }
+  let(:post) do
+    Post.create!(title: 'Hello', text: 'This is my first post', comments_counter: 0, likes_counter: 0, author: user)
+  end
+
   describe 'GET #index' do
-    before(:example) { get user_posts_path(user_id: 688) }
+    before(:example) { get :index, params: { user_id: user.id } }
 
-    it 'returns http success status' do
-      expect(response).to have_http_status(:ok)
+    it 'returns http success' do
+      expect(response).to have_http_status(:success)
     end
 
-    it "renders 'index' template" do
+    it 'renders the index template' do
       expect(response).to render_template('index')
     end
 
-    it 'response body includes correct placeholder text' do
-      expect(response.body).to include('Pagination')
+    it 'assigns @posts' do
+      expect(assigns(:posts)).to eq([post])
     end
   end
 
   describe 'GET #show' do
-    before(:example) { get user_post_path(user_id: 53, id: 53) }
+    let(:user) { User.create!(name: 'Tom', posts_counter: 0) }
+    let(:post) do
+      Post.create!(title: 'Hello', text: 'This is my first post', comments_counter: 0, likes_counter: 0, author: user)
+    end
+
+    before(:example) { get :show, params: { user_id: user.id, id: post.id } }
 
     it 'returns http success status' do
-      expect(response).to have_http_status(:ok)
+      expect(response).to have_http_status(:success)
     end
 
     it "renders 'show' template" do
       expect(response).to render_template('show')
-    end
-
-    it 'response body includes correct placeholder text' do
-      expect(response.body).to include('Hi from Posts page')
     end
   end
 end

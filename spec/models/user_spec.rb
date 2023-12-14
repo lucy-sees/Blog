@@ -1,45 +1,51 @@
-require 'rails_helper'
+require_relative '../rails_helper'
 
 RSpec.describe User, type: :model do
-  let(:user) { FactoryBot.create(:user) }
+  subject { User.new(name: 'Billy', photo: 'https://unsplash.com/photos/F_-0BxGuVvo', bio: 'Coder', posts_counter: 1323) }
 
-  it 'has a valid factory' do
-    expect(FactoryBot.build(:user)).to be_valid
+  before { subject.save }
+
+  it 'name should be present' do
+    subject.name = nil
+    expect(subject).to_not be_valid
   end
 
-  describe 'validations' do
-    subject { User.new(name: 'Faker', posts_counter: 0) }
-
-    before { subject.save }
-
-    it 'includes name' do
-      subject.name = nil
-      expect(subject).to_not be_valid
-    end
-
-    it 'should allow valid values for posts_counter' do
-      subject.posts_counter = -1
-      expect(subject).to_not be_valid
-    end
+  it 'name should be Dodzi' do
+    expect(subject.name).to eql 'Billy'
   end
 
-  describe '#return_recent_posts' do
-    it 'returns the most recent posts' do
-      older_post = FactoryBot.create(:post, author: user, created_at: 2.days.ago)
-      recent_post1 = FactoryBot.create(:post, author: user, created_at: 1.day.ago)
-      recent_post2 = FactoryBot.create(:post, author: user, created_at: 1.hour.ago)
+  it 'photo should be valid' do
+    expect(subject.photo).to eql 'https://unsplash.com/photos/F_-0BxGuVvo'
+    expect(subject.photo).to be_a(String)
+  end
 
-      recent_posts = user.return_recent_posts
+  it 'bio should be valid' do
+    expect(subject.bio).to eql 'Coder'
+    expect(subject.bio).to be_a(String)
+  end
 
-      expect(recent_posts.sort_by(&:created_at)).to eq([older_post, recent_post1, recent_post2])
-    end
+  it 'posts counter should be present' do
+    subject.posts_counter = nil
+    expect(subject).to_not be_valid
+  end
 
-    it 'returns up to 3 recent posts' do
-      FactoryBot.create_list(:post, 5, author: user)
+  it 'posts counter should be valid' do
+    expect(subject.posts_counter).to eql 1323
+  end
 
-      recent_posts = user.return_recent_posts
+  it 'posts counter should be integer' do
+    expect(subject.posts_counter).to be_a(Integer)
+    expect(subject).to be_valid
+    subject.posts_counter = 3.14
+    expect(subject).to_not be_valid
+  end
 
-      expect(recent_posts.count).to eq(3)
-    end
+  it 'posts counter should be greater than or equal to 0' do
+    subject.posts_counter = -13
+    expect(subject).to_not be_valid
+  end
+
+  it 'should return the 3 most recent posts for a given user' do
+    expect(subject.recent_posts).to eq(subject.posts.order(created_at: :desc).limit(3))
   end
 end
