@@ -1,9 +1,9 @@
 class ApplicationController < ActionController::Base
-  def current_user
-    @current_user ||= User.first
-    before_action :authenticate_user!
-    before_action :configure_permitted_parameters, if: :devise_controller?
-  end
+  # def current_user
+  #   @current_user ||= User.first
+  #   before_action :authenticate_user!
+  #   before_action :configure_permitted_parameters, if: :devise_controller?
+  # end
 
   protected
 
