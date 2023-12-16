@@ -87,4 +87,4 @@ gem 'faker', '~> 3.2'
 
 gem 'devise'
 
-gem 'dotenv-rails', groups: [:development, :test]
+gem 'dotenv-rails', groups: %i[development test]
